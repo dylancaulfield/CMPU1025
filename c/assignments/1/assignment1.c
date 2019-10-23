@@ -21,27 +21,27 @@
 
 // Struct to hold the questions, correct answers, user answers
 // and the number of questions to be asked for each round of the quiz
-struct Quiz
+typedef struct Quiz
 {
     char questions[MAX_NUM_QUESTIONS][QUESTION_LENGTH];
     double correctAnswers[MAX_NUM_QUESTIONS];
     double answersGiven[MAX_NUM_QUESTIONS];
     short numQs;
-};
+} Quiz;
 
 // Function Declarations
 short showMenu(short, short);
-void showQuiz(struct Quiz);
-struct Quiz newQuiz();
-struct Quiz playQuiz(struct Quiz);
-struct Quiz setNumQuizQs(struct Quiz);
+void showQuiz(Quiz);
+Quiz newQuiz();
+Quiz playQuiz(Quiz);
+Quiz setNumQuizQs(Quiz);
 void clearStdin();
 
 int main()
 {
     int roundNum = 1; // If this is 1 do not allow user to view results
     short menuSelection = 0;
-    struct Quiz currentQuiz, lastQuiz;
+    Quiz currentQuiz, lastQuiz;
 
     // Set first quiz
     currentQuiz = newQuiz();
@@ -134,7 +134,7 @@ short showMenu(short roundNum, short numRounds)
 }
 
 // Function to show the result of the previous quiz
-void showQuiz(struct Quiz quiz)
+void showQuiz(Quiz quiz)
 {
 
     char hold;
@@ -173,7 +173,7 @@ void showQuiz(struct Quiz quiz)
 }
 
 // Function to create a new quiz with random questions
-struct Quiz newQuiz()
+Quiz newQuiz()
 {
 
     int random;
@@ -194,7 +194,7 @@ struct Quiz newQuiz()
 
     double answers[10] = {17, 15, 104, 2.5, 17, -13, 40, 5, -8, 8}; // Correspond with questions
 
-    struct Quiz quiz = {}; // Create a new round
+    Quiz quiz = {}; // Create a new round
     quiz.numQs = MAX_NUM_QUESTIONS;    // Set the number of questions for the round
 
     // Set the seed for the random number generator to the current time
@@ -229,7 +229,7 @@ struct Quiz newQuiz()
 }
 
 // Function to let the user go through each question in the quiz
-struct Quiz playQuiz(struct Quiz quiz)
+Quiz playQuiz(Quiz quiz)
 {
 
     system("clear");
@@ -274,7 +274,7 @@ struct Quiz playQuiz(struct Quiz quiz)
 
 // Function to set the numbers of questions to be asked
 // in the next round of the quiz
-struct Quiz setNumQuizQs(struct Quiz quiz)
+Quiz setNumQuizQs(Quiz quiz)
 {
 
     short numQs = 0;
