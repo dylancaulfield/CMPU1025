@@ -13,24 +13,26 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include <time.h>
+
+#define MAX_NUM_QUESTIONS 5
+#define QUESTION_LENGTH 20
 
 // Struct to hold the questions, correct answers, user answers
 // and the number of questions to be asked for each round of the quiz
 struct Quiz
 {
-    char questions[5][20];
-    double correctAnswers[5];
-    double answersGiven[5];
+    char questions[MAX_NUM_QUESTIONS][QUESTION_LENGTH];
+    double correctAnswers[MAX_NUM_QUESTIONS];
+    double answersGiven[MAX_NUM_QUESTIONS];
     short numQs;
 };
 
 // Function Declarations
 short showMenu(short, short);
 void showQuiz(struct Quiz);
-struct Quiz newQuiz(short);
+struct Quiz newQuiz();
 struct Quiz playQuiz(struct Quiz);
 struct Quiz setNumQuizQs(struct Quiz);
 void clearStdin();
@@ -41,8 +43,8 @@ int main()
     short menuSelection = 0;
     struct Quiz currentQuiz, lastQuiz;
 
-    // Set first quiz with 5 questions
-    currentQuiz = newQuiz(5);
+    // Set first quiz
+    currentQuiz = newQuiz();
 
     // Clear the screen
     system("clear");
@@ -104,7 +106,7 @@ short showMenu(short roundNum, short numRounds)
 {
 
     short optionChosen = 0;
-    char tmp[50];
+    char tmp[QUESTION_LENGTH];
 
     // Present the options to the user until they select a valid one
     do
@@ -171,13 +173,13 @@ void showQuiz(struct Quiz quiz)
 }
 
 // Function to create a new quiz with random questions
-struct Quiz newQuiz(short numQs)
+struct Quiz newQuiz()
 {
 
     int random;
-    char tempQuestion[20];
+    char tempQuestion[QUESTION_LENGTH];
     double tempAnswer;
-    char questions[10][20] =
+    char questions[10][QUESTION_LENGTH] =
         {
             "1 + 7 + 9",
             "3 x 5",
@@ -193,17 +195,17 @@ struct Quiz newQuiz(short numQs)
     double answers[10] = {17, 15, 104, 2.5, 17, -13, 40, 5, -8, 8}; // Correspond with questions
 
     struct Quiz quiz = {}; // Create a new round
-    quiz.numQs = numQs;    // Set the number of questions for the round
+    quiz.numQs = MAX_NUM_QUESTIONS;    // Set the number of questions for the round
 
     // Set the seed for the random number generator to the current time
     srand(time(NULL));
 
     // Add 5 questions and answers to the quiz
-    for (short i = 0; i < 5; i++)
+    for (short i = 0; i < MAX_NUM_QUESTIONS; i++)
     {
         // New random number between 0 and the number of rounds - i
         // Add i to offset against the questions already used at the beginning of the array due to swapping
-        random = (rand() % (numQs - i)) + i;
+        random = (rand() % (MAX_NUM_QUESTIONS - i)) + i;
 
         // Add the random question to the new Round struct
         strcpy(quiz.questions[i], questions[random]);
@@ -283,16 +285,16 @@ struct Quiz setNumQuizQs(struct Quiz quiz)
     do
     {
 
-        printf("How many questions should the next round of the quiz have? (1-5): ");
+        printf("How many questions should the next round of the quiz have? (1-%d): ", MAX_NUM_QUESTIONS);
 
         scanf(" %hd", &numQs);
         clearStdin();
 
         system("clear");
 
-        printf("Invalid input! Enter a number between 1-5\n\n");
+        printf("Invalid input! Enter a number between 1-%d\n\n", MAX_NUM_QUESTIONS);
 
-    } while (numQs < 1 || numQs > 5); // End do while
+    } while (numQs < 1 || numQs > MAX_NUM_QUESTIONS); // End do while
 
     quiz.numQs = numQs;
 
