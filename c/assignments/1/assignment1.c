@@ -1,7 +1,7 @@
 /*
 
-    Program to show the user a maths quiz with options
-    to do the quiz a number of times and to see the results
+    Program to show the user a maths round with options
+    to do the round a number of times and to see the results
 
     Dylan Caulfield
     22/10/2019
@@ -19,34 +19,37 @@
 
 #define MAX_NUM_QS 5
 #define Q_LENGTH 20
-#define NUM_AVAILABLE_QS 10
+#define NUM_AVAIL_QS 10
 
 // Struct to hold the questions, correct answers, user answers
-// and the number of questions to be asked for each round of the quiz
-typedef struct Quiz
+// and the number of questions to be asked for a single round of the round
+struct Round
 {
     char questions[MAX_NUM_QS][Q_LENGTH];
     double correctAnswers[MAX_NUM_QS];
     double answersGiven[MAX_NUM_QS];
     short numQs;
-} Quiz;
+};
+
+typedef struct Round Round;
+
 
 // Function Declarations
 short showMenu(short, short);
-void showQuiz(Quiz, int);
-Quiz newQuiz();
-Quiz playQuiz(Quiz);
-Quiz setNumQuizQs(Quiz);
-void clearStdin();
+void showRoundResults(Round, int);
+Round newRound();
+Round playRound(Round);
+Round setRoundNumQs(Round);
+
 
 int main()
 {
     int roundNum = 1; // If this is 1 do not allow user to view results
     short menuSelection = 0;
-    Quiz currentQuiz, lastQuiz;
+    Round currentRound, lastRound;
 
-    // Set first quiz
-    currentQuiz = newQuiz();
+    // Set first round
+    currentRound = newRound();
 
     // Clear the screen
     system("clear");
@@ -54,30 +57,34 @@ int main()
     while (menuSelection != 4)
     {
 
-        menuSelection = showMenu(roundNum, currentQuiz.numQs);
+        // Show the menu and pass the current round number and the number of
+        // questions to be played on the next round. This returns an integer
+        // between 1 and 4.
+        //
+        menuSelection = showMenu(roundNum, currentRound.numQs);
 
         switch (menuSelection)
         {
-        case 1: // Set number of rounds for quiz
+        case 1: // Set number of rounds for round chosen
 
-            currentQuiz = setNumQuizQs(currentQuiz);
+            currentRound = setRoundNumQs(currentRound);
 
             break;
-        case 2: // Start Quiz
+        case 2: // Start Round chosen
 
-            currentQuiz = playQuiz(currentQuiz);
+            currentRound = playRound(currentRound);
 
-            // Save quiz as last quiz
-            lastQuiz = currentQuiz;
+            // Save round as last round
+            lastRound = currentRound;
 
-            // Create a new quiz round
-            currentQuiz = newQuiz(5);
+            // Create a new round round
+            currentRound = newRound(5);
 
             // Increment the round number
             roundNum++;
 
             break;
-        case 3: // Show results of last quiz
+        case 3: // Show results of last round chosen
 
             if (roundNum == 1)
             {
@@ -88,14 +95,12 @@ int main()
                 break;
             }
 
-            showQuiz(lastQuiz, roundNum - 1);
+            showRoundResults(lastRound, roundNum - 1);
 
             break;
-        case 4:
+        case 4: // Exit program chosen
+
             // Do nothing and let program exit
-            break;
-        default:
-            printf("\nInvalid input, select an option between 1 and 4\n");
             break;
         }
     }
@@ -115,13 +120,16 @@ short showMenu(short roundNum, short numRounds)
     {
         printf("Round #%d\n\n", roundNum);
         printf("Please enter an option from below:\n\n");
-        printf("1. Set the number of questions for the next round of the quiz[%hd]\n", numRounds);
-        printf("2. Start quiz\n");
-        printf("3. Show results of last quiz\n");
+        printf("1. Set the number of questions for the next round of the round[%hd]\n", numRounds);
+        printf("2. Start the next round of the round\n");
+        printf("3. Show the results from the last round of the round\n");
         printf("4. Exit the program\n\n");
 
         scanf(" %hd", &optionChosen);
-        clearStdin();
+
+        // Clear standard input of any characters or numbers
+        while (getchar() != '\n')
+            ;
 
         system("clear");
 
@@ -136,7 +144,7 @@ short showMenu(short roundNum, short numRounds)
 }
 
 // Function to show the result of the previous round
-void showQuiz(Quiz quiz, int roundNum)
+void showRoundResults(Round round, int roundNum)
 {
 
     short correct = 0, incorrect = 0;
@@ -146,19 +154,17 @@ void showQuiz(Quiz quiz, int roundNum)
     printf("Results For Round #%d:\n\n", roundNum);
 
     // Loop to count the number of questions answered correctly
-    for (short i = 0; i < quiz.numQs; i++)
+    for (short i = 0; i < round.numQs; i++)
     {
 
-        //quiz.answersGiven[i] == quiz.correctAnswers[i] ? correct++ : incorrect++;
-
         // If the answer given equals the correct answer
-        if (quiz.answersGiven[i] == quiz.correctAnswers[i])
+        if (round.answersGiven[i] == round.correctAnswers[i])
         {
-            correct++;
+            correct++; // Add 1 to correct counter
         }
         else
         {
-            incorrect++;
+            incorrect++; // Add 1 to incorrect counter
         }
     }
 
@@ -169,14 +175,14 @@ void showQuiz(Quiz quiz, int roundNum)
     return;
 }
 
-// Function to create a new quiz with random questions
-Quiz newQuiz()
+// Function to create a new round with random questions
+Round newRound()
 {
 
-    int random;
+    int random, i;
     char tempQuestion[Q_LENGTH];
     double tempAnswer;
-    char questions[NUM_AVAILABLE_QS][Q_LENGTH] =
+    char questions[NUM_AVAIL_QS][Q_LENGTH] =
         {
             "1 + 7 + 9",
             "3 x 5",
@@ -189,23 +195,23 @@ Quiz newQuiz()
             "34 - 42",
             "2 * 2 * 2"};
 
-    double answers[NUM_AVAILABLE_QS] = {17, 15, 104, 2.5, 17, -13, 40, 5, -8, 8}; // Correspond with questions
+    double answers[NUM_AVAIL_QS] = {17, 15, 104, 2.5, 17, -13, 40, 5, -8, 8}; // Answers that correspond with questions
 
-    Quiz quiz = {};          // Create a new round
-    quiz.numQs = MAX_NUM_QS; // Set the number of questions for the round
+    Round round = {};         // Create a new round
+    round.numQs = MAX_NUM_QS; // Set the number of questions for the round
 
     // Set the seed for the random number generator to the current time
     srand(time(NULL));
 
-    // Add 5 questions and answers to the quiz
-    for (short i = 0; i < MAX_NUM_QS; i++)
+    // Loop to add 5 random questions and their answers to the Round
+    for (i = 0; i < MAX_NUM_QS; i++)
     {
         // New random number between 0 and the number of rounds - i
         // Add i to offset against the questions already used at the beginning of the array due to swapping
-        random = (rand() % (NUM_AVAILABLE_QS - i)) + i;
+        random = (rand() % (NUM_AVAIL_QS - i)) + i;
 
-        // Add the random question to the new Quiz struct
-        strcpy(quiz.questions[i], questions[random]);
+        // Add the random question to the new Round struct
+        strcpy(round.questions[i], questions[random]);
 
         // Swap random question with question at i
         strcpy(tempQuestion, questions[i]);
@@ -213,7 +219,7 @@ Quiz newQuiz()
         strcpy(questions[random], tempQuestion);
 
         // Add the random questions answer to rounds answers
-        quiz.correctAnswers[i] = answers[random];
+        round.correctAnswers[i] = answers[random];
 
         // Swap random answers with answer at i
         tempAnswer = answers[i];
@@ -222,56 +228,62 @@ Quiz newQuiz()
 
     } // End Question and Answer for loop
 
-    return quiz;
+    return round;
 }
 
-// Function to let the user go through each question in the quiz
-Quiz playQuiz(Quiz quiz)
+// Function to let the user go through each question in the round
+Round playRound(Round round)
 {
+
+    int i;
 
     system("clear");
 
     // Show the user each question and get their answer
-    for (int i = 0; i < quiz.numQs; i++)
+    for (i = 0; i < round.numQs; i++)
     {
 
         // Loop accepting the answer until the user enters a valid number
         do
         {
             // Print question with the maths in yellow for clarity
-            printf("Question #%d (\x1b[33m%s = ?\x1b[0m): ", i + 1, quiz.questions[i]);
+            printf("Question #%d (\x1b[33m%s = ?\x1b[0m): ", i + 1, round.questions[i]);
 
-            scanf(" %lf", &quiz.answersGiven[i]);
-            clearStdin();
+            scanf(" %lf", &round.answersGiven[i]);
+
+            // Clear standard input of any characters or numbers
+            while (getchar() != '\n')
+                ;
 
             // Check if the answer given is outside of the range of a double
-            if (quiz.answersGiven[i] < DBL_MIN || quiz.answersGiven[i] > DBL_MAX)
+            if (round.answersGiven[i] < DBL_MIN || round.answersGiven[i] > DBL_MAX)
             {
                 printf("Please enter a valid number!\n\n");
             }
 
-        } while (quiz.answersGiven[i] < DBL_MIN || quiz.answersGiven[i] > DBL_MAX);
+        } while (round.answersGiven[i] < DBL_MIN || round.answersGiven[i] > DBL_MAX);
 
-        // Print the valid answer the users entered
-        printf("\nYou entered %.1lf which is ", quiz.answersGiven[i]);
+        // Print the valid answer the user entered
+        printf("\nYou entered %.1lf which is ", round.answersGiven[i]);
 
         // End the message differently if the answer given was correct or incorrect
-        if (quiz.answersGiven[i] == quiz.correctAnswers[i])
+        if (round.answersGiven[i] == round.correctAnswers[i])
         {
             printf("correct!\n\n");
         }
         else
         {
-            printf("incorrect. The correct answer is %.1lf\n\n", quiz.correctAnswers[i]);
+            printf("incorrect. The correct answer is %.1lf\n\n", round.correctAnswers[i]);
         }
     }
 
-    return quiz;
+    return round;
 }
 
-// Function to set the numbers of questions to be asked
-// in the next round of the quiz
-Quiz setNumQuizQs(Quiz quiz)
+// Function that takes a Round and allows the user to change
+// the number of questions that will be asked on that round.
+// It returns the updated Round
+Round setRoundNumQs(Round round)
 {
 
     short numQs = 0;
@@ -282,10 +294,13 @@ Quiz setNumQuizQs(Quiz quiz)
     do
     {
 
-        printf("How many questions should the next round of the quiz have? (1-%d): ", MAX_NUM_QS);
+        printf("How many questions should the next round of the round have? (1-%d): ", MAX_NUM_QS);
 
         scanf(" %hd", &numQs);
-        clearStdin();
+
+        // Clear standard input of any characters or numbers
+        while (getchar() != '\n')
+            ;
 
         system("clear");
 
@@ -293,23 +308,9 @@ Quiz setNumQuizQs(Quiz quiz)
 
     } while (numQs < 1 || numQs > MAX_NUM_QS); // End do while
 
-    quiz.numQs = numQs;
+    round.numQs = numQs;
 
     system("clear");
 
-    return quiz;
+    return round;
 }
-
-// Function to clear standard input if a character
-// is entered instead of a number which prevents an endless loop
-void clearStdin()
-{
-
-    // Read every character from standard input until a newline is found
-    // to clear the standard input buffer
-    while (fgetc(stdin) != '\n')
-    {
-    }
-
-    return;
-} // Found at https://stackoverflow.com/questions/5087062/how-to-get-int-from-stdio-in-c
