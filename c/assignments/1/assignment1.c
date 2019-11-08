@@ -37,11 +37,9 @@ struct Round
     short numQs;
 };
 
-
 // This allows me to declare variables as 'Round variableName' instead of 'struct Round variableName'
 //
 typedef struct Round Round;
-
 
 // Function Declarations
 short showMenu(int, short);
@@ -49,7 +47,6 @@ void showRoundResults(Round, int);
 Round newRound();
 Round playRound(Round);
 Round setRoundNumQs(Round);
-
 
 int main()
 {
@@ -85,17 +82,14 @@ int main()
 
         case 2: // Start Round chosen
 
-
             // Check if number of rounds has not been set
             if (currentRound.numQs == 0)
             {
-                
+
                 // If the number of questions hasn't been set show the main menu again
                 printf("You must set the number of questions for the next round!\n\n");
                 break;
-
             }
-            
 
             // Call the playRound function to play the next round of the quiz
             currentRound = playRound(currentRound);
@@ -234,12 +228,12 @@ Round newRound()
             "27 + 13",
             "30 / 6",
             "34 - 42",
-            "2 * 2 * 2"};
+            "2 x 2 x 2"};
 
     double answers[NUM_AVAIL_QS] = {17, 15, 104, 2.5, 17, -13, 40, 5, -8, 8}; // Answers that correspond with questions
 
-    Round round = {};         // Create a new round
-    round.numQs = 0; // Set the number of questions for the round to 0 as default. The user must set this to play
+    Round round = {}; // Create a new round
+    round.numQs = 0;  // Set the number of questions for the round to 0 as default. The user must set this to play
 
     // Set the seed for the random number generator to the current time
     srand(time(NULL));
@@ -276,7 +270,7 @@ Round newRound()
 }
 
 // Function to let the user go through each question in the Round
-// 
+//
 // Takes in a Round and returns the Round with the answers the user has given
 //
 Round playRound(Round round)
@@ -290,25 +284,14 @@ Round playRound(Round round)
     for (i = 0; i < round.numQs; i++)
     {
 
-        // Loop that reads in an answer until the user enters a valid number
-        do
-        {
-            // Print question with the maths in yellow using ANSI codes for clarity
-            printf("Question #%d (\x1b[33m%s = ?\x1b[0m): ", i + 1, round.questions[i]);
+        // Print question with the maths in yellow using ANSI codes for clarity
+        printf("Question #%d (\x1b[33m%s = ?\x1b[0m): ", i + 1, round.questions[i]);
 
-            scanf(" %lf", &round.answersGiven[i]);
+        scanf(" %lf", &round.answersGiven[i]);
 
-            // Clear standard input of any characters or numbers
-            while (getchar() != '\n')
-                ;
-
-            // Check if the answer given is outside of the range of a double
-            if (round.answersGiven[i] < -DBL_MAX || round.answersGiven[i] > DBL_MAX)
-            {
-                printf("Please enter a valid number!\n\n");
-            }
-
-        } while (round.answersGiven[i] < -DBL_MAX || round.answersGiven[i] > DBL_MAX);
+        // Clear standard input of any characters or numbers
+        while (getchar() != '\n')
+            ;
 
         // Print the valid answer the user entered
         printf("\nYou entered %.1lf which is ", round.answersGiven[i]);
@@ -323,13 +306,13 @@ Round playRound(Round round)
             printf("incorrect. The correct answer is %.1lf\n\n", round.correctAnswers[i]);
         }
 
-    }//End for
+    } //End for
 
     return round;
 }
 
 // Function that sets the number of questions for the next Round of the quiz
-// 
+//
 // It takes in a Round and returns the updated Round
 //
 Round setRoundNumQs(Round round)
