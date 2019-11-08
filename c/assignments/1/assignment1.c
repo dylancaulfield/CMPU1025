@@ -85,6 +85,19 @@ int main()
 
         case 2: // Start Round chosen
 
+
+            // Check if number of rounds has not been set
+            if (currentRound.numQs == 0)
+            {
+                
+                // If the number of questions hasn't been set show the main menu again
+                printf("You must set the number of questions for the next round!\n\n");
+                break;
+
+            }
+            
+
+            // Call the playRound function to play the next round of the quiz
             currentRound = playRound(currentRound);
 
             // Save round as last round
@@ -219,14 +232,14 @@ Round newRound()
             "23 - 6",
             "40 - 20 x 3 + 7",
             "27 + 13",
-            "30 ÷ 6",
+            "30 / 6",
             "34 - 42",
             "2 * 2 * 2"};
 
     double answers[NUM_AVAIL_QS] = {17, 15, 104, 2.5, 17, -13, 40, 5, -8, 8}; // Answers that correspond with questions
 
     Round round = {};         // Create a new round
-    round.numQs = MAX_NUM_QS; // Set the number of questions for the round
+    round.numQs = 0; // Set the number of questions for the round to 0 as default. The user must set this to play
 
     // Set the seed for the random number generator to the current time
     srand(time(NULL));
@@ -330,7 +343,7 @@ Round setRoundNumQs(Round round)
     do
     {
 
-        printf("How many questions should the next round of the round have? (1-%d): ", MAX_NUM_QS);
+        printf("How many questions should the next round of the quiz have? (1-%d): ", MAX_NUM_QS);
 
         scanf(" %hd", &numQs);
 
