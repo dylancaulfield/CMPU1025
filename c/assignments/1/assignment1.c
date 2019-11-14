@@ -40,7 +40,9 @@ struct Round
 //
 typedef struct Round Round;
 
-// Function Declarations
+// Function declarations so I can call them from inside main but actually
+// write the functions below it
+//
 short showMenu(int, int);
 void showRoundResults(Round, int);
 Round newRound();
@@ -223,7 +225,7 @@ void showRoundResults(Round round, int roundNum)
 
 // Function to create a new Round with random questions
 //
-// It doesn't take an parameters and returns a new Round
+// It doesn't take any parameters and returns a new Round
 //
 Round newRound()
 {
@@ -231,6 +233,8 @@ Round newRound()
     int random, i;
     char tempQuestion[Q_LENGTH];
     double tempAnswer;
+
+    // Pool of questions that can be asked
     char questions[NUM_AVAIL_QS][Q_LENGTH] =
         {
             "1 + 7 + 9",
@@ -257,11 +261,12 @@ Round newRound()
     {
         // New random number between 0 and the maximum number of rounds - i
         // Add i to offset against the questions already used at the beginning of the array due to swapping
+        //
         random = (rand() % (NUM_AVAIL_QS - i)) + i;
 
         // Add the random question to the new Round struct
         //
-        // strcpy is used to assign a character array to an exising array.
+        // strcpy is used to copy a character array to an exising array.
         //
         strcpy(round.questions[i], questions[random]);
 
@@ -278,7 +283,7 @@ Round newRound()
         answers[i] = answers[random];
         answers[random] = tempAnswer;
 
-    } // End Question and Answer for loop
+    } // End random questions and answers for loop
 
     return round;
 }
@@ -345,9 +350,10 @@ Round setRoundNumQs(Round round)
 
         scanf(" %d", &numQs);
 
-        // Clear standard input of any characters or numbers
+        // Clear standard input buffer of any characters or numbers
         while (getchar() != '\n')
-            ;
+        {
+        }
 
         system("clear");
 
