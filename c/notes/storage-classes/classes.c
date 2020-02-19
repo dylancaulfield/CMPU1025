@@ -45,11 +45,10 @@ int main()
         Extern variables
 
         - Extern variables are very similar to global variables
-        - 
+        - Mad global variables stay away
 
    */
 
     extern int g;
     extern float h[5];
-
 }
